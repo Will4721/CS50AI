@@ -55,6 +55,9 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
+    if action[0] < 0 or action[0] > 2 or action[1] < 0 or action[1] > 2:
+        raise Exception("Invalid move: Out of bounds")
+
     if board[action[0]][action[1]] != EMPTY:
         raise Exception("Invalid move")
     else:
@@ -160,6 +163,7 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    if terminal(board): return None
     play = player(board)
     if play == X:
         best_score = -math.inf
