@@ -1,6 +1,6 @@
 import numpy as np
 
-# 1. Nøglen: En 3x3 matrix (Vores hemmelige 3D-rum)
+
 KEY_MATRIX = np.array([
     [3, 2, 1, 4, 2, 7],
     [1, 4, 2, 3, 2, 1],
@@ -11,38 +11,37 @@ KEY_MATRIX = np.array([
 ])
 
 def lwe_demo():
-    # Data vi vil skjule: "abc" (ASCII: 97, 98, 99)
+
     original_data = np.array([83, 69, 67,82,69,84])
-    print(f"1. Original data: {original_data} ('Secret')")
+    print(f"1. Original data: {original_data} ('Secret')\n")
 
-    # Den rene matematik (Uden støj - den som en hacker kan regne baglæns)
+
     perfect_coord = np.dot(KEY_MATRIX, original_data)
+    print(f"2. New matrix: {perfect_coord} \n")
 
-    # 2. LWE MAGIEN: Vi opretter bevidst støj (tilfældige decimaler)
-    # Støjen skal være stor nok til at skjule sporet, men lille nok til vi kan runde den væk
+
     noise = np.random.uniform(-0.4, 0.4, size=6)
 
-    # 3. Det offentlige koordinat (Det vi gemmer i databasen)
+
     public_coord = perfect_coord + noise
 
-    print(f"\n2. Det hackeren ser (Støjfyldt koordinat):")
+    print("what the hacker would see ")
     print(public_coord)
     print("(Prøv at bruge standard lineær algebra på det der... det fejler!)")
 
-    # --- NU SKAL VI DEKRYPTERE ---
+
     print("\n--- DEKRYPTERING MED NØGLEN ---")
 
-    # Vi bruger den inverse matrix (vores låsesmed) for at regne os tilbage
+
     inverse_matrix = np.linalg.inv(KEY_MATRIX)
 
-    # Computeren regner baglæns fra det støjfyldte koordinat
+
     messy_result = np.dot(inverse_matrix, public_coord)
 
     print(f"\n3. Råt resultat fra computeren før afrunding:")
     print(messy_result)
 
-    # 4. The Closest Vector Problem løses ved hjælp af basal afrunding
-    # Fordi vi har den rigtige matrix, er fejlen fordelt rigtigt, og vi kan bare runde af til nærmeste hele tal (int)
+
     clean_result = np.round(messy_result).astype(int)
 
     recovered_text = "".join(chr(val) for val in clean_result)
